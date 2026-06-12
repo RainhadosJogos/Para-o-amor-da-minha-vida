@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="pt-br">    
+<head>    
+  <meta charset="UTF-8" />    
+  <meta name="viewport" content="width=device-width, initial-scale=1" />    
+  <title>MARCOS.EXE</title>    
+  <style>
+    body {
+      background-color: #000;
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .menu-terminal {
+      background-color: #000;
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #00ff00;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .menu-terminal a {
+      color: #00ff00;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+
+    .menu-terminal a:hover {
+      background-color: #00ff00;
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    #terminal-container {
+      padding: 40px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #terminal {
+      background: #111;
+      padding: 20px;
+      width: 80%;
+      max-width: 700px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px #00ff00;
+      border-radius: 10px;
+      font-size: 18px;
+      white-space: pre-wrap;
+      text-align: left;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 1em;
+      background: #00ff00;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0; }
+    }
+
+    #enter-btn {
+      display: none;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background: transparent;
+      border: 2px solid #00ff00;
+      color: #00ff00;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #enter-btn:hover {
+      background: #00ff00;
+      color: #000;
+    }
+
+    .futuristic-section {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+      border-top: 1px solid #00ff00;
+      border-bottom: 1px solid #00ff00;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .futuristic-section.active {
+      display: block;
+    }
+
+    .glow-text {
+      font-size: 2em;
+      text-shadow: 0 0 8px #00ff00;
+      margin-bottom: 20px;
+    }
+
+    .typing-text {
+      font-size: 1.2em;
+      border-right: 2px solid #00ff00;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: blink-caret 1s step-end infinite;
+      display: inline-block;
+    }
+
+    @keyframes blink-caret {
+      50% { border-color: transparent; }
+    }
+
+    .status-panel {
+      background: #001100;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px auto;
+      box-shadow: inset 0 0 10px #00ff00;
+      text-align: left;
+      max-width: 500px;
+    }
+
+    .neon-button {
+      background: transparent;
+      border: 2px solid #00ff00;
+      color: #00ff00;
+      padding: 10px 20px;
+      font-weight: bold;
+      font-family: 'Courier New', monospace;
+      cursor: pointer;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #00ff00;
+      margin: 10px;
+      transition: all 0.3s;
+    }
+
+    .neon-button:hover {
+      background: #00ff00;
+      color: #000;
+      box-shadow: 0 0 20px #00ff00;
+    }
+
+    .robo-img {
+      width: 140px;
+      max-width: 50%;
+      animation: flutuar 3s ease-in-out infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes flutuar {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .frase-terminal {
+      font-size: 1.2em;
+      margin: 20px 0;
+    }
+
+    /* Diário Interativo do Frodo */
+    .diario-interativo {
+      margin: 30px auto;
+      max-width: 600px;
+      perspective: 1000px;
+    }
+
+    .diario-book {
+      background: #1a1a1a;
+      border: 2px solid #00ff00;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+      padding: 5px;
+      position: relative;
+    }
+
+    .diario-page {
+      background: #0a0a0a;
+      border: 1px solid #00ff0033;
+      padding: 30px;
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 5px;
+      background-image: radial-gradient(#00ff0011 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .diario-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #00ff0033;
+      padding-bottom: 10px;
+      font-weight: bold;
+      color: #00ff00;
+    }
+
+    .diario-content {
+      flex-grow: 1;
+      padding: 20px 0;
+      font-style: italic;
+      line-height: 1.8;
+      font-size: 1.1em;
+      color: #e0e0e0;
+      text-align: left;
+    }
+
+    .diario-footer {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid #00ff0033;
+      padding-top: 15px;
+    }
+
+    .diario-btn {
+      background: transparent;
+      border: 1px solid #00ff00;
+      color: #00ff00;
+      padding: 5px 15px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+
+    .diario-btn:hover {
+      background: #00ff00;
+      color: #000;
+    }
+
+    /* Trilha Sonora - Melhorada */
+    #playlist-container {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding: 15px;
+      gap: 10px;
+      margin: 20px auto 30px;
+      max-width: 800px;
+      background: rgba(0, 255, 0, 0.05);
+      border-radius: 10px;
+      border: 1px solid rgba(0, 255, 0, 0.2);
+      scrollbar-width: thin;
+      scrollbar-color: #00ff00 transparent;
+    }
+
+    #playlist-container::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    #playlist-container::-webkit-scrollbar-thumb {
+      background: #00ff00;
+      border-radius: 10px;
+    }
+
+    .track-button {
+      flex: 0 0 auto;
+      white-space: nowrap;
+      font-size: 0.85em;
+      padding: 8px 15px;
+      background: transparent;
+      border: 1px solid #00ff00;
+      color: #00ff00;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+
+    .track-button:hover {
+      background: #00ff00;
+      color: #000;
+    }
+
+    /* Escolha Diária */
+    .escolha-diaria {
+      margin-top: 40px;
+      padding: 20px;
+      border-top: 1px solid #00ff0033;
+    }
+
+    .resultado-escolha {
+      margin-top: 20px;
+      padding: 20px;
+      background: #001100;
+      border-radius: 10px;
+      border: 1px solid #00ff00;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .status-sucesso {
+      color: #00ff88;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .motivo-text {
+      font-size: 1.3em;
+      color: #fff;
+      text-shadow: 0 0 5px #00ff00;
+    }
+
+    /* Item Lendário */
+    .item-card {
+      background: #111;
+      border: 2px solid #b8860b;
+      padding: 20px;
+      max-width: 400px;
+      margin: 40px auto;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(184, 134, 11, 0.4);
+      text-align: left;
+    }
+
+    .rarity-legendary {
+      color: #ffa500;
+      font-weight: bold;
+      text-shadow: 0 0 10px #ffa500;
+      font-size: 1.2em;
+    }
+
+    .item-body {
+      margin: 20px 0;
+      line-height: 1.8;
+    }
+
+    .item-footer {
+      font-style: italic;
+      color: #888;
+      border-top: 1px solid #333;
+      padding-top: 10px;
+    }
+
+    /* Cápsulas de Memória */
+    .capsulas-grid {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .capsula {
+      padding: 15px 25px;
+      border: 1px solid #00ff00;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-radius: 5px;
+    }
+
+    .capsula:hover {
+      background: #00ff00;
+      color: #000;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #111;
+      padding: 40px;
+      border: 1px solid #00ff00;
+      border-radius: 15px;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .modal-content input {
+      background: #000;
+      border: 1px solid #00ff00;
+      color: #00ff00;
+      padding: 10px;
+      width: 100%;
+      margin: 20px 0;
+      font-family: inherit;
+    }
+
+    /* O Condado */
+    .condado-panel {
+      border: 2px solid #00ff00;
+      text-align: center;
+      background: rgba(0, 255, 0, 0.05);
+    }
+
+    .condado-panel h3 {
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
+      margin-bottom: 20px;
+    }
+
+    .divider {
+      height: 1px;
+      background: #00ff0033;
+      margin: 20px 0;
+    }
+
+    .final-destiny {
+      font-size: 1.2em;
+      color: #fff;
+    }
+
+    /* Estrelas e Frases */
+    #star-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .star-phrase-overlay {
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-style: italic;
+      text-shadow: 0 0 15px #fff;
+      z-index: 20;
+      pointer-events: none;
+      font-size: 1.5em;
+      text-align: center;
+      width: 80%;
+      opacity: 0;
+      transition: opacity 1s;
+    }
+
+    .contador-card {
+      background: #111;
+      border: 1px solid #00ff00;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px auto;
+      max-width: 500px;
+    }
+
+    .contador-amor {
+      font-size: 1.5em;
+      color: #00ff00;
+      margin-bottom: 15px;
+    }
+
+    .foto-unica-wrapper {
+      margin-top: 20px;
+    }
+
+    .foto-unica-img {
+      max-width: 100%;
+      border-radius: 10px;
+      border: 1px solid #00ff00;
+    }
+
+    .fragmentos-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .fragmento-card {
+      background: #111;
+      border: 1px solid #00ff0033;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: left;
+    }
+
+    .fragmento-card .frase {
+      font-style: italic;
+      color: #00ff00;
+      margin-bottom: 10px;
+    }
+
+    .fragmento-card .explicacao {
+      color: #ccc;
+      font-size: 0.9em;
+    }
+
+    .error-code {
+      font-size: 5em;
+      color: #ff0000;
+      text-shadow: 0 0 20px #ff0000;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>    
+<body>    
+  <canvas id="star-canvas"></canvas>    
+  <div id="star-phrase" class="star-phrase-overlay"></div>
+  <button id="toggle-stars" class="neon-button toggle-stars">Estrelas</button>    
+
+  <!-- Menu -->    
+  <nav class="menu-terminal hidden" id="menu">    
+    <a href="#terminal-container">Início</a>    
+    <a href="#next-section">Núcleo</a>    
+    <a href="#robo-section">Frodo</a>    
+    <a href="#music-section">Trilha</a>    
+    <a href="#mensagem-section">Mensagem</a>  
+    <a href="#contador-section">Jornada</a>
+    <a href="#item-lendario-section">Item Lendário</a>
+    <a href="#capsulas-section">Cápsulas</a>
+    <a href="#fragmentos-section">Fragmentos</a>  
+    <a href="#condado-section">O Condado</a>
+  </nav>    
+
+  <!-- Terminal -->    
+  <div id="terminal-container">    
+    <div id="terminal"></div><span class="cursor"></span>    
+    <button id="enter-btn" onclick="enterSystem()">Entrar no sistema</button>    
+  </div>    
+
+  <!-- Núcleo -->    
+  <section id="next-section" class="futuristic-section">    
+    <h2 class="glow-text">Núcleo Emocional Ativo</h2>    
+    <p class="typing-text"></p>    
+    <div class="status-panel">    
+      <pre>
+Status do sistema:    
+- Amor: 100%    
+- Paixão: 100%    
+- Confiança: 100%    
+- Saudade: 100%    
+- Conexão: Estável    
+      </pre>    
+    </div>    
+    <button class="neon-button" onclick="mostrarRobo()">Acessar Robô</button>    
+  </section>    
+
+  <!-- Frodo -->
+  <section id="robo-section" class="futuristic-section">
+    <h2 class="glow-text">Frodo</h2>
+    <img src="Frodo.PNG" alt="Frodo Fofo" class="robo-img" />
+    <p id="frase" class="frase-terminal">Você ainda domina minha mente.</p>    
+    <button class="neon-button" onclick="trocarFrase()">Nova mensagem</button>
+    <button class="neon-button" onclick="toggleDiario()">Diário do Frodo</button>
+    
+    <!-- Novo Diário Interativo -->
+    <div id="diario-container" class="diario-interativo hidden">
+      <div class="diario-book">
+        <div class="diario-page">
+          <div class="diario-header">
+            <span id="diario-numero">Página 1</span>
+            <span class="diario-icon">📖</span>
+          </div>
+          <div class="diario-content">
+            <p id="diario-texto"></p>
+          </div>
+          <div class="diario-footer">
+            <button class="diario-btn" onclick="paginaAnterior()">◀️</button>
+            <button class="diario-btn" onclick="proximaPagina()">▶️</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="neon-button" onclick="mostrarTrilha()">Explorar Memórias</button>    
+  </section>    
+
+  <!-- Trilha Sonora -->    
+  <section id="music-section" class="futuristic-section">    
+    <h2 class="glow-text">Trilha Sonora Emocional</h2>    
+    <p class="music-desc">Meu coração pulsa na mesma frequência.</p>    
+    <div id="playlist-container"></div>    
+    <div id="music-player">    
+      <h3 id="track-title">Carregando...</h3>    
+      <div id="player-container"></div>    
+      <button class="neon-button" onclick="nextTrack()">Próxima música</button>    
+    </div>    
+  </section>    
+
+  <!-- Mensagem Secreta -->    
+  <section id="mensagem-section" class="futuristic-section">    
+    <h2 class="glow-text">Mensagem Secreta do Coração</h2>    
+    <div id="carta-digitada" class="terminal-carta"></div>    
+    <button class="neon-button" onclick="iniciarCarta()">Ler mensagem secreta</button>
+    
+    <!-- Escolha Diária -->
+    <div class="escolha-diaria">
+      <button class="neon-button" onclick="registrarEscolha()">[ Escolher você novamente ]</button>
+      <div id="resultado-escolha" class="resultado-escolha hidden">
+        <p id="dia-escolha"></p>
+        <p class="status-sucesso">Escolha registrada com sucesso.</p>
+        <p><strong>Motivo:</strong></p>
+        <p id="motivo-escolha" class="motivo-text"></p>
+      </div>
+    </div>
+  </section>    
+
+  <!-- Nossa Jornada (Contador) -->
+  <section id="contador-section" class="futuristic-section">
+    <h2 class="glow-text">Nossa Jornada</h2>
+    <div class="contador-card">
+      <div id="contador" class="contador-amor">Carregando tempo...</div>
+      <p class="contador-frase">Cada segundo ao seu lado é um presente que eu guardo com todo carinho.</p>
+      
+      <div class="foto-unica-wrapper">
+        <div class="foto-unica-container">
+          <img id="foto-casal" src="Amor.JPEG" alt="Nossa Foto Especial" class="foto-unica-img" />
+          <div class="foto-overlay">Nossa História 💜</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Item Lendário -->
+  <section id="item-lendario-section" class="futuristic-section">
+    <h2 class="glow-text">ITEM LENDÁRIO</h2>
+    <div class="item-card">
+      <div class="item-header">
+        <span class="rarity-legendary">LENDÁRIO</span>
+      </div>
+      <div class="item-body">
+        <p><strong>Nome:</strong> Marcos</p>
+        <p><strong>Raridade:</strong> Única</p>
+        <p><strong>Classe:</strong> Insubstituível</p>
+        <p><strong>Peso:</strong> Carrega meu coração inteiro</p>
+        <p><strong>Valor de mercado:</strong> Incalculável</p>
+      </div>
+      <div class="item-footer">
+        "Um tesouro encontrado em meio ao caos do mundo."
+      </div>
+    </div>
+  </section>
+
+  <!-- Cápsulas de Memória -->
+  <section id="capsulas-section" class="futuristic-section">
+    <h2 class="glow-text">💌 Cápsulas de Memória</h2>
+    <div class="capsulas-grid">
+      <div class="capsula" onclick="abrirCapsula(1)">[ MEMÓRIA 01 ]</div>
+      <div class="capsula" onclick="abrirCapsula(2)">[ MEMÓRIA 02 ]</div>
+      <div class="capsula" onclick="abrirCapsula(3)">[ MEMÓRIA 03 ]</div>
+    </div>
+    <div id="capsula-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Acesso Restrito</h3>
+        <p>Insira a senha para desbloquear esta memória:</p>
+        <input type="password" id="capsula-senha" placeholder="Senha...">
+        <button class="neon-button" onclick="verificarSenha()">Desbloquear</button>
+        <div id="memoria-texto" class="hidden"></div>
+        <button class="neon-button" onclick="fecharModal()">Fechar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fragmentos de Amor -->
+  <section id="fragmentos-section" class="futuristic-section">
+    <h2 class="glow-text">Fragmentos de Amor</h2>
+    <p class="music-desc">Frases que me lembram você.</p>
+    <div id="fragmentos-container" class="fragmentos-container">
+      <div class="fragmento-card">
+        <p class="frase">"É que você nasceu pra ser minha, vamos dividir uma casinha, uma cama, dormir de conchinha, Deus abençoou a nossa união"<br><span class="autor">- Os anjos cantam </span></p>
+        <p class="explicacao">Não existe um único dia em que eu não agradeça a Deus por você existir, acredito que oro mais por você do que por mim, porque o que preciso já tenho ao meu lado, então apenas posso agradecer e pedir para ele que você tenha tudo o que precisa.</p>
+      </div>
+      <div class="fragmento-card">
+        <p class="frase">"Essa é minha escolha, e eu escolho você, eu não preciso de imortalidade você é minha eternidade."<br><span class="autor">- Caraval</span></p>
+        <p class="explicacao">Não existe um paraíso em que você não esteja.</p>
+      </div>
+      <div class="fragmento-card">
+        <p class="frase">"Porque mesmo que não dure, mesmo que tudo de errado e eu fique sozinho e miserável, a menor chance de uma vida perfeita com você é infinitamente melhor do que uma vida imortal sem você."<br><span class="autor">- The Vampire Diaries</span></p>
+        <p class="explicacao">Percebi que te amava quando pela primeira vez eu quis ficar em um lugar e não ir embora, permanecer, persistir, tentar, mesmo com defeitos porque até eles aprendi a amar. </p>
+      </div>
+      <div class="fragmento-card">
+        <p class="frase">"Você acha que existe um dia perfeito?"<br><span class="autor">- Por Lugares Incríveis</span></p>
+        <p class="explicacao">Um dia perfeito para mim é aquele em que você faz parte, mesmo que em um lugar distante, porque saber que você existe já é suficiente.</p>
+      </div>
+      <div class="fragmento-card">
+        <p class="frase">"Eu te reconheceria na completa escuridão se eu fosse mudo e você surdo, eu te reconheceria em outras vidas, em outros corpos, em outros tempos e te amaria em cada um deles, até que a ultima estrela do universo se apagasse na completa escuridão."<br><span class="autor">- A Canção de Aquiles</span></p>
+        <p class="explicacao">Você é único para mim, não existe qualquer outra parte de você no universo e nenhuma parte de mim que não te amaria, mesmo que você não me amasse de volta.</p>
+      </div>
+      <div class="fragmento-card">
+        <p class="frase">"Em todas as vidas eu sei que irei te fazer me amar, porque gosto tanto de você que posso enlouquecer."<br><span class="autor">- Alquimia das Almas</span></p>
+        <p class="explicacao">Peço todos os dias que Deus me permita te amar até nas próximas vidas que viram, pois uma única vida nunca será o suficiente para te amar na intensidade que meu peito transborda.</p>
+      </div>
+      <div class="fragmento-card">
+        <p class="frase">"Não importa, nada disso importa, você não precisa ser mais a garota do tempo, e dai que a gente nunca mais veja o sol? eu quero você mais do que qualquer céu azul, o tempo que se dane."<br><span class="autor">- O Tempo Com Você</span></p>
+        <p class="explicacao">Do que adiantaria um céu azul em um mundo que você não estivesse? Quando reassisti pela quarta vez conseguia apenas pensar em você.</p>
+      </div>
+      <div class="fragmento-card">
+        <p class="frase">"I don't wanna get undressed<br>For a new person all over again<br>I don't wanna kiss someone else's neck<br>And have to pretend it's yours instead<br><br>And I don't wanna learn another scent<br>I don't want the children of another girl<br>To have eyes of the man I won't forget<br>I won't forget"<br><span class="autor">- Sombr - Undressed</span></p>
+        <p class="explicacao">Se não for com você, não quero que seja com mais ninguém.</p>
+      </div>
+      <div class="fragmento-card">
+        <p class="frase">"Eu amo tudo em você, mesmo as parte que você considera serem obscuras, e vergonhosas, cada cicatriz, cada falha, cada imperfeição. Eu amo você."<br><span class="autor">- Bridgerton</span></p>
+        <p class="explicacao">Amar é uma escolha e eu escolho te amar todos os dias, paixão pode ser algo passageiro, mas o amor é o que permanece mesmo nas dificuldades, podendo ir e escolhendo mesmo assim ficar..</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- O Condado -->
+  <section id="condado-section" class="futuristic-section">
+    <h2 class="glow-text">🏡 O Condado</h2>
+    <div class="status-panel condado-panel">
+      <h3>Status do Lar</h3>
+      <p><strong>Localização:</strong> Ao seu lado</p>
+      <p><strong>Segurança:</strong> 100%</p>
+      <p><strong>Paz:</strong> 100%</p>
+      <p><strong>Saudade:</strong> Ativa</p>
+      <div class="divider"></div>
+      <p class="final-destiny"><strong>Destino:</strong> Construindo uma vida juntos...</p>
+    </div>
+  </section>
+
+  <!-- Página de Error:404 -->    
+  <section id="error-section" class="futuristic-section">    
+    <h1 class="error-code">ERROR:404</h1>
+    <p>Esse caminho ainda não está liberado, volte e crie mais memórias com a administradora.</p>    
+    <button class="neon-button" onclick="reiniciarSistema()">Reiniciar Sistema</button>
+  </section> 
+
+  <!-- Sons -->
+  <audio id="type-sound" src="https://www.soundjay.com/keyboard/sounds/keyboard-1.mp3" preload="auto"></audio>
+  <audio id="glitch-sound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+
+  <!-- Scripts -->
+  <script src="https://www.youtube.com/iframe_api"></script>    
+  <script>
+    const terminal = document.getElementById('terminal');
+    const cursor = document.querySelector('.cursor');
+    const enterBtn = document.getElementById('enter-btn');
+    const nextSection = document.getElementById('next-section');
+    const roboSection = document.getElementById('robo-section');
+    const musicSection = document.getElementById('music-section');
+    const mensagemSection = document.getElementById('mensagem-section');
+    const terminalContainer = document.getElementById('terminal-container');
+    const sound = document.getElementById('type-sound');
+    const menu = document.getElementById('menu');
+    const trackTitle = document.getElementById('track-title');
+    const playerContainer = document.getElementById('player-container');
+    const playlistContainer = document.getElementById('playlist-container');
+    const cartaDigitada = document.getElementById('carta-digitada');
+    const toggleStarsBtn = document.getElementById('toggle-stars');
+    const errorSection = document.getElementById('error-section');
+    const fragmentosSection = document.getElementById('fragmentos-section');
+    const contadorSection = document.getElementById('contador-section');
+    const contadorElement = document.getElementById('contador');
+
+    // === Terminal Inicial ===
+    const lines = [
+      "Inicializando sistema MARCOS.EXE...",
+      "Identidade reconhecida: Marcos",
+      "Carregando memórias compartilhadas...",
+      "Sincronizando corações...",
+      "Conexão estabelecida com sucesso.",
+      "♥️ Amor detectado.",
+      "Bem-vindo, viajante."
+    ];
+    let lineIndex = 0;
+    let charIndex = 0;
+
+    function typeLine() {
+      if (lineIndex < lines.length) {
+        const currentLine = lines[lineIndex];
+        terminal.textContent += currentLine[charIndex] || '';
+        charIndex++;
+        if (charIndex < currentLine.length) {
+          sound.currentTime = 0;
+          sound.play();
+          setTimeout(typeLine, 50);
+        } else {
+          terminal.textContent += '\n';
+          charIndex = 0;
+          lineIndex++;
+          setTimeout(typeLine, 400);
+        }
+      } else {
+        cursor.style.display = 'none';
+        enterBtn.style.display = 'inline-block';
+      }
+    }
+
+    window.onload = typeLine;
+
+    enterBtn.addEventListener('click', enterSystem);
+
+    function enterSystem() {
+      terminalContainer.style.display = 'none';
+      nextSection.classList.add('active');
+      typeNextSectionText();
+    }
+
+    function typeNextSectionText() {
+      const typingElem = document.querySelector('.typing-text');
+      const text = "Processando sentimentos... Conectando coração à rede...";
+      let idx = 0;
+      function typeChar() {
+        if (idx <= text.length) {
+          typingElem.textContent = text.substring(0, idx);
+          idx++;
+          setTimeout(typeChar, 60);
+        }
+      }
+      typeChar();
+    }
+
+    // === Robô e Diário Interativo ===
+    function mostrarRobo() {
+      nextSection.classList.remove('active');
+      roboSection.classList.add('active');
+      roboSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    const frases = [
+      "Toda jornada épica começa com um encontro inesperado.",
+      "Mesmo atravessando toda a Terra-média, eu encontraria o caminho até você.",
+      "Nem mesmo as estrelas de Valinor brilham tanto quanto o seu sorriso.",
+      "Se a jornada for longa, caminharei ao seu lado até o último amanhecer.",
+      "Meu coração encontrou seu lar quando encontrou você.",
+      "Você é minha pessoa favorita em todos os reinos conhecidos.",
+      "Em qualquer mapa, meu destino final seria você.",
+      "Há coisas raras em todos os mundos. Você é a mais rara delas.",
+      "Se existirem outras vidas, espero encontrar você em todas elas.",
+      "Você vale mais do que qualquer item lendário.",
+      "Toda grande aventura precisa de alguém especial. A minha é você.",
+      "Entre todos os territórios de Black Desert, meu lugar favorito continua sendo ao seu lado.",
+      "Você vale mais do que qualquer acessório PEN.",
+      "Nem a sorte de um aprimoramento perfeito me deixaria tão feliz quanto uma mensagem sua.",
+      "Meu coração fica mais acelerado quando você aparece do que durante uma batalha de chefe mundial.",
+      "Você é o tesouro mais raro que encontrei em toda a minha jornada.",
+      "Se eu pudesse escolher apenas uma recompensa, escolheria você.",
+      "Nem mesmo uma montaria lendária chegaria tão longe quanto meus sentimentos por você.",
+      "Você transformou minha aventura em um lar.",
+      "Se a vida fosse uma missão, você seria a parte mais importante dela.",
+      "Entre desertos, oceanos e montanhas, sempre encontraria o caminho de volta para você.",
+      "Mesmo carregando o Um Anel, o peso que mais gosto de sentir é o da sua mão na minha.",
+      "Você é meu Condado depois de um dia difícil.",
+      "Há jornadas que mudam o mundo. Você mudou o meu.",
+      "Meu coração encontrou seu lar quando encontrou você.",
+      "Nem toda luz vem das estrelas. Algumas vêm do seu sorriso.",
+      "Se eu me perdesse na Terra-média, ainda encontraria você.",
+      "Entre elfos, reis e magos, você continua sendo minha pessoa favorita.",
+      "Meu maior tesouro não foi encontrado em uma aventura, mas em você.",
+      "Mesmo no caminho mais escuro, você é minha esperança.",
+      "Existem muitas histórias grandiosas, mas a minha favorita é a nossa.",
+      "Se o destino me desse mil vidas, eu procuraria você em todas elas.",
+      "Você é mais raro que mithril.",
+      "Nem os sábios de Valfenda conseguiriam explicar o quanto eu gosto de você.",
+      "Se a estrada for longa, prometo caminhar ao seu lado até o fim.",
+      "Meu lar não é um lugar. É você.",
+      "Você faz até os dias comuns parecerem lendários.",
+      "Em qualquer reino, eu escolheria você novamente.",
+      "Mesmo quando não digo nada, meu coração continua falando seu nome.",
+      "Você é a estrela que sigo quando não sei para onde ir.",
+      "Não existe aventura que eu prefira viver sem você.",
+      "Entre todos os territórios de Black Desert, meu favorito é onde você está.",
+      "Você vale mais que qualquer acessório PEN.",
+      "Meu coração acelera mais com uma mensagem sua do que com um chefe mundial.",
+      "Nem mesmo uma tentativa de aprimoramento perfeita me deixa tão feliz quanto você.",
+      "Você é o item mais raro que encontrei nessa jornada.",
+      "Meu ponto de retorno sempre será ao seu lado.",
+      "Você é a recompensa que faz toda missão valer a pena.",
+      "Mesmo nos dias difíceis, você é meu buff de coragem.",
+      "Se eu tivesse apenas uma escolha, ainda escolheria você.",
+      "Entre desertos, mares e montanhas, encontraria o caminho até você.",
+      "Você é minha descoberta favorita.",
+      "Nenhum mapa mostra o caminho para o que sinto por você.",
+      "Meu coração aceitou uma missão permanente: amar você.",
+      "Você é mais valioso que qualquer tesouro escondido em Valencia.",
+      "A melhor aventura da minha vida começou quando você apareceu.",
+      "Mesmo depois de milhares de quilômetros percorridos, meu destino continua sendo você.",
+      "Você transformou uma simples jornada em uma história épica.",
+      "Se eu pudesse salvar apenas uma lembrança, escolheria um momento ao seu lado.",
+      "Você é la paz que encontro depois de cada batalha.",
+      "Eu atravessaria Valencia, Kamasylvia e toda a Terra-média apenas para te dar mais um abraço."
+    ];
+
+    let ultimaFrase = "";
+    function trocarFrase() {
+      let nova;
+      do {
+        nova = frases[Math.floor(Math.random() * frases.length)];
+      } while (nova === ultimaFrase);
+      ultimaFrase = nova;
+      document.getElementById("frase").textContent = nova;
+    }
+
+    const diarioMensagens = [
+      "Hoje caminhei muitos quilômetros, mas ainda não encontrei um lugar tão confortável quanto o abraço dele.",
+      "O Um Anel pode ser pesado, mas a saudade de você pesa muito mais no meu peito.",
+      "Sam diz que precisamos de comida, eu digo que preciso apenas de um sorriso do Marcos para recuperar o fôlego.",
+      "Vi uma estrela cadente hoje e, em vez de pedir para chegar à Montanha da Perdição, pedi para estar logo com você.",
+      "As estradas de Kamasylvia são belas, mas nenhuma trilha se compara ao caminho que me leva até você.",
+      "Às vezes sinto que estou em uma missão impossível, mas lembrar de nós me dá o buff de coragem que eu precisava.",
+      "Escrevo estas linhas sob a luz de uma fogueira, imaginando quando será nossa próxima aventura real.",
+      "Encontrei um cristal raro hoje, mas ele não brilha nem metade do que os seus olhos quando você ri.",
+      "O deserto de Valencia é quente, mas não tanto quanto o calor que sinto quando penso em você.",
+      "Se a vida for um MMORPG, você é o único jogador com quem eu quero fazer grupo para sempre.",
+      "Trocaria todo o mithril do mundo por mais cinco minutos de silêncio ao seu lado.",
+      "A jornada é longa e cheia de perigos, mas com você na minha mente, me sinto invencível.",
+      "Sonhei com o Condado hoje, e você estava lá, sentado na grama comigo. Foi o melhor sonho da viagem.",
+      "Meus pés estão cansados, mas meu coração está mais leve do que nunca desde que te conheci.",
+      "Existe uma magia em você que nem os magos mais sábios conseguiriam explicar.",
+      "Cada passo que dou para longe é um passo que planejo dar de volta para os seus braços.",
+      "A escuridão tenta me cercar, mas a lembrança do seu 'eu te amo' é minha luz de Eärendil.",
+      "Se eu pudesse salvar o mundo ou salvar você, eu escolheria você e construiríamos um novo mundo juntos.",
+      "O tempo parece passar diferente quando estamos longe, como se os segundos fossem eras.",
+      "Minha maior conquista não foi um item PEN, foi ter conquistado um espaço no seu coração."
+    ];
+
+    let paginaAtualDiario = 0;
+
+    function toggleDiario() {
+      const container = document.getElementById('diario-container');
+      container.classList.toggle('hidden');
+      if (!container.classList.contains('hidden')) {
+        atualizarPaginaDiario();
+      }
+    }
+
+    function atualizarPaginaDiario() {
+      const texto = document.getElementById('diario-texto');
+      const numero = document.getElementById('diario-numero');
+      texto.textContent = '"' + diarioMensagens[paginaAtualDiario] + '"';
+      numero.textContent = 'Página ' + (paginaAtualDiario + 1);
+    }
+
+    function proximaPagina() {
+      if (paginaAtualDiario < diarioMensagens.length - 1) {
+        paginaAtualDiario++;
+        atualizarPaginaDiario();
+      }
+    }
+
+    function paginaAnterior() {
+      if (paginaAtualDiario > 0) {
+        paginaAtualDiario--;
+        atualizarPaginaDiario();
+      }
+    }
+
+    // === Trilha Sonora ===
+    function mostrarTrilha() {
+      roboSection.classList.remove('active');
+      musicSection.classList.add('active');
+      menu.classList.remove('hidden');
+      musicSection.scrollIntoView({ behavior: 'smooth' });
+      renderPlaylist();
+      loadTrack(currentTrackIndex);
+    }
+
+    const playlist = [
+      { title: "Damiano - The First Time", id: "n1Hzf_is8tI" },
+      { title: "Cazuza - Exagerado", id: "KmVmoHg9zuU" },
+      { title: "Mitski - Washing Machine Heart", id: "3vjkh-acmTE" },
+      { title: "Billie Eilish - Birds of a Feather", id: "d5gf9dXbPi0" },
+      { title: "Billie Eilish - Wildflower", id: "l08Zw-RY__Q" },
+      { title: "Kamaitachi - Julieta", id: "qGCq4wrQhSg" },
+      { title: "Barão Vermelho - Por Você", id: "WRGcgkF1mK8" },
+      { title: "Tom Jobim - Eu Sei Que Vou Te Amar", id: "TARRNm0x1Iw" },
+      { title: "Jorge e Mateus - Pra Sempre com Você", id: "VWRkQARH-9o" },
+      { title: "Diego e Victor - Entregador de Flor", id: "TvgHPioJqAY" },
+      { title: "Luan Santana - Te Vivo", id: "iwBNAkU9wMk" },
+      { title: "Luan Santana - Tudo Que Você Quiser", id: "zF2I8IazFNo" },
+      { title: "AnaVitória e Lenine - Lisboa", id: "o3-lzz60iTQ" },
+      { title: "AnaVitória e Vitor Kley - Pupila", id: "9Sk7RQtSl5g" },
+      { title: "The Neighbourhood - Fall Star", id: "54kTO17-j_0" },
+      { title: "The Neighbourhood - Little Death", id: "LVqGRJLEj28" },
+      { title: "Damiano - Zombie Lady", id: "LP2nqXYwl6Q" },
+      { title: "Chris Grey - lifetime", id: "R6B0cnduVWE" },
+      { title: "Chris Grey - Burn The World", id: "SkcO47UDzzY" },
+      { title: "Fuji Kaze - Shinunoga E Wa", id: "dawrQnvwMTY" },
+      { title: "Guns N' Roses - Sweet Child O'Mine", id: "1w7OgIMMRc4" },
+      { title: "Avenged Sevenfold - Gunslinger", id: "cdKyzzm465Q" },
+      { title: "Guns N' Roses - This I Love", id: "vhvP905I-aQ" },
+      { title: "Slayer - Raining Blood", id: "CkaE237oiwE" },
+      { title: "AudioSlave - Like a Stone", id: "7QU1nvuxaMA" },
+      { title: "Sombr - Undressed", id: "z0wT6CrEGY" },
+      { title: "Luisa Sonza - Iguaria", id: "Y9KY4s8lIHA" },
+      { title: "Venere Vai Venus - Anjos", id: "mJjHVOv2bWI" },
+      { title: "Artic Monkeys - I Wanna Be Yours", id: "nyuo9-OjNNg" },
+      { title: "Lana Del Rey - Young And Beautiful", id: "o_1aF54DO60" },
+      { title: "Post Malone ft. Ozzy Osbourne, Travis Scott - Take What You Want", id: "LYa_ReqRlcs" },
+      { title: "Ozzy Osbourne - No More Tears", id: "CprfjfN5PRs" },
+      { title: "Goo Goo Dolls - Iris", id: "NdYWuo9OFAw" }
+    ];
+
+    let currentTrackIndex = 0;
+    let player;
+
+    function renderPlaylist() {
+      playlistContainer.innerHTML = '';
+      playlist.forEach(function(track, index) {
+        const btn = document.createElement('button');
+        btn.classList.add('track-button');
+        btn.textContent = track.title;
+        btn.onclick = function() {
+          currentTrackIndex = index;
+          loadTrack(currentTrackIndex);
+        };
+        playlistContainer.appendChild(btn);
+      });
+    }
+
+    function onYouTubeIframeAPIReady() {
+      console.log("YouTube API Ready");
+    }
+
+    function loadTrack(index) {
+      const track = playlist[index];
+      trackTitle.textContent = track.title;
+      
+      // Remove player antigo se existir para evitar bugs de carregamento
+      playerContainer.innerHTML = '<div id="yt-player"></div>';
+      
+      player = new YT.Player('yt-player', {
+        height: '90',
+        width: '100%',
+        videoId: track.id,
+        playerVars: { 
+          'autoplay': 1, 
+          'controls': 1, 
+          'rel': 0, 
+          'modestbranding': 1,
+          'origin': window.location.origin
+        },
+        events: {
+          'onReady': (event) => event.target.playVideo(),
+          'onStateChange': onPlayerStateChange,
+          'onError': (e) => console.error("Erro no player:", e)
+        }
+      });
+    }
+
+    function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.ENDED) nextTrack();
+    }
+
+    function nextTrack() {
+      currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+      loadTrack(currentTrackIndex);
+    }
+
+    // === Carta Secreta ===
+    const textoCarta = "Às vezes eu penso em como é estranho que uma pessoa consiga mudar tanta coisa sem sequer perceber. Antes de você, meus dias eram apenas dias. Eu acordava, fazia minhas coisas e seguia em frente. Depois de você, comecei a prestar atenção nos detalhes. Em músicas. Em frases. Em cenas de filmes. Em céus bonitos. Em tudo aquilo que me faz pensar: \"eu gostaria de dividir isso com ele.\"\nVocê se tornou parte da minha rotina de um jeito tão natural que hoje é impossível imaginar meus pensamentos sem que você apareça em algum momento. Você está nos meus planos, nas minhas expectativas e até nas coisas mais simples, como quando vejo algo engraçado e penso que preciso te contar.\nEu sei que passamos por momentos difíceis. Tivemos inseguranças, saudades, dias em que o mundo parecia pesado demais. Mas uma das coisas que mais admiro em nós é que continuamos escolhendo ficar. Continuamos escolhendo conversar, compreender, esperar e construir algo juntos. E isso me fez entender que amor não é apenas sentir; amor também é permanecer.\nPorque não importa o que aconteça, eu sempre vou escolher você.\nAcredito que o mesmo esforço que uma pessoa pode usar para pensar em desistir também pode ser usado para encontrar razões para permanecer. E, quando penso em nós, sempre encontro razões para ficar. Razões para continuar construindo, aprendendo, amadurecendo e sonhando ao seu lado.\nSe eu pudesse te mostrar como te vejo, talvez você entendesse melhor o quanto você significa para mim.\nEu amo o seu sorriso. Amo a forma como ele consegue melhorar os meus dias sem sequer tentar. Amo o seu cheiro, porque existe algo nele que me traz uma tranquilidade difícil de explicar. É como se, por alguns instantes, todo o barulho do mundo diminuísse e eu finalmente pudesse descansar.\nE eu amo os seus olhos.\nPorque quando olho para eles, sinto uma paz que não encontro em nenhum outro lugar. E porque, de alguma forma, consigo enxergar neles tudo aquilo que sempre procurei: carinho, conforto, cumplicidade e a sensação de estar exatamente onde eu deveria estar.\nVocê me faz sentir acolhida, como se eu tivesse encontrado um lugar para descansar depois de uma longa jornada.\nTalvez por isso eu goste tanto das histórias de aventura. Porque elas sempre falam sobre encontrar algo precioso depois de atravessar caminhos difíceis. E eu sinto que encontrei algo precioso in você.\nSei que ainda temos muitas páginas para escrever. Muitas memórias para criar. Muitas músicas para ouvir. Muitas conversas até tarde da noite. Muitos abraços que ainda não aconteceram. E, sinceramente, gosto da ideia de que nosso futuro ainda está sendo construído.\nVocê me ensinou que amar não é apenas olhar para alguém e gostar do que vê. É olhar para alguém e desejar continuar ali, mesmo quando as coisas ficam complicadas.\nObrigada por ser você. Por ser minha pessoa favorita. Por transformar meus dias com sua presença.\nEu te amo, Marcos.\nHoje, amanhã e em todos os \"para sempre\" que a gente inventar.";
+
+    function iniciarCarta() {
+      cartaDigitada.textContent = "";
+      let i = 0;
+      function digitar() {
+        if (i < textoCarta.length) {
+          cartaDigitada.textContent += textoCarta.charAt(i);
+          i++;
+          setTimeout(digitar, 30);
+        }
+      }
+      digitar();
+    }
+
+    // === Escolha Diária ===
+    const motivos = [
+      "Seu sorriso.", "Seu cheiro.", "Seu abraço.", "Seu jeito de cuidar de mim.",
+      "Seu olhar.", "Sua companhia.", "Sua paciência.", "Seu senso de humor.",
+      "A forma como você me faz sentir em casa.", "Sua voz que me acalma.",
+      "A segurança que sinto ao seu lado.", "Como você entende meus silêncios.",
+      "Sua determinação.", "O brilho nos seus olhos.", "O jeito que você me faz rir.",
+      "Sua bondade infinita.", "Como você torna meus dias melhores.",
+      "Sua parceria em todas as missões.", "O futuro que vejo com você.", "Simplesmente por ser você."
+    ];
+
+    function registrarEscolha() {
+      const resultado = document.getElementById('resultado-escolha');
+      const diaTxt = document.getElementById('dia-escolha');
+      const motivoTxt = document.getElementById('motivo-escolha');
+      
+      const dataInicio = new Date("2025-10-08T00:00:00");
+      const agora = new Date();
+      const dias = Math.floor((agora - dataInicio) / (1000 * 60 * 60 * 24));
+      
+      resultado.classList.remove('hidden');
+      diaTxt.textContent = 'Dia ' + dias;
+      motivoTxt.textContent = motivos[Math.floor(Math.random() * motivos.length)];
+    }
+
+    // === Cápsulas de Memória ===
+    let capsulaAtual = 0;
+    const memorias = {
+      1: "Lembro exatamente de como meu coração disparou na primeira vez que te vi. Foi ali que a aventura começou.",
+      2: "Nossa primeira viagem foi mágica. O mundo parecia menor porque eu estava com você.",
+      3: "O primeiro 'eu te amo' foi o momento em que todas as peças se encaixaram. Eu já sabia, mas ouvir foi eterno."
+    };
+
+    function abrirCapsula(id) {
+      capsulaAtual = id;
+      document.getElementById('capsula-modal').classList.remove('hidden');
+      document.getElementById('memoria-texto').classList.add('hidden');
+      document.getElementById('capsula-senha').value = "";
+    }
+
+    function verificarSenha() {
+      const senha = document.getElementById('capsula-senha').value.toLowerCase();
+      if (senha === 'cogumelo') {
+        const texto = document.getElementById('memoria-texto');
+        texto.textContent = memorias[capsulaAtual];
+        texto.classList.remove('hidden');
+      } else {
+        alert("Senha incorreta, viajante.");
+      }
+    }
+
+    function fecharModal() {
+      document.getElementById('capsula-modal').classList.add('hidden');
+    }
+
+    // === Seções ===
+    const sections = {
+      'terminal-container': terminalContainer,
+      'next-section': nextSection,
+      'robo-section': roboSection,
+      'music-section': musicSection,
+      'mensagem-section': mensagemSection,
+      'contador-section': contadorSection,
+      'item-lendario-section': document.getElementById('item-lendario-section'),
+      'capsulas-section': document.getElementById('capsulas-section'),
+      'fragmentos-section': fragmentosSection,
+      'condado-section': document.getElementById('condado-section'),
+      'error-section': errorSection
+    };
+
+    document.querySelectorAll('#menu a').forEach(function(link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href').substring(1);
+        Object.values(sections).forEach(function(sec) {
+          if (sec === terminalContainer) sec.style.display = 'none';
+          else sec.classList.remove('active');
+        });
+        if (targetId === 'terminal-container') terminalContainer.style.display = 'flex';
+        else if (sections[targetId]) {
+          sections[targetId].classList.add('active');
+          sections[targetId].scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    // === Contador ===
+    function atualizarContador() {
+      const dataInicio = new Date("2025-10-08T00:00:00");
+      const agora = new Date();
+      const diff = agora - dataInicio;
+      const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutos = Math.floor((diff / (1000 * 60)) % 60);
+      const segundos = Math.floor((diff / 1000) % 60);
+      contadorElement.innerHTML = dias + ' dias, ' + horas + 'h ' + minutos + 'm ' + segundos + 's';
+    }
+    setInterval(atualizarContador, 1000);
+    atualizarContador();
+
+    // === Estrelas e Frases ===
+    const canvas = document.getElementById('star-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    let starsActive = false;
+
+    const estrelaFrases = [
+      "As estrelas sobre Mordor eram as mesmas que iluminavam o Condado.",
+      "Mesmo separados por alguns quilômetros, olhamos para o mesmo céu.",
+      "Cada estrela lá no alto é um motivo a mais para eu te amar.",
+      "O universo é vasto, mas meu mundo inteiro é você.",
+      "Enquanto houver estrelas no céu, haverá amor no meu peito.",
+      "Você é a estrela mais brilhante da minha constelação particular.",
+      "A luz das estrelas viaja anos para chegar até nós, assim como meu amor atravessa qualquer distância."
+    ];
+
+    function mostrarFraseEstrela() {
+      const overlay = document.getElementById('star-phrase');
+      overlay.textContent = estrelaFrases[Math.floor(Math.random() * estrelaFrases.length)];
+      overlay.style.opacity = 1;
+      setTimeout(function() { overlay.style.opacity = 0; }, 6000);
+    }
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function Star() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.size = Math.random() * 2;
+      this.speed = Math.random() * 0.5;
+    }
+    Star.prototype.update = function() {
+      this.y += this.speed;
+      if (this.y > canvas.height) this.y = 0;
+    };
+    Star.prototype.draw = function() {
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
+    function animateStars() {
+      if (!starsActive) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(function(star) { star.update(); star.draw(); });
+      requestAnimationFrame(animateStars);
+    }
+
+    toggleStarsBtn.addEventListener('click', function() {
+      starsActive = !starsActive;
+      if (starsActive) {
+        stars = [];
+        for (let i = 0; i < 150; i++) stars.push(new Star());
+        animateStars();
+        mostrarFraseEstrela(); // Mostra a frase apenas quando clica
+        toggleStarsBtn.textContent = "Parar Estrelas";
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        toggleStarsBtn.textContent = "Estrelas";
+        document.getElementById('star-phrase').style.opacity = 0;
+      }
+    });
+
+    function reiniciarSistema() { location.reload(); }
+  </script>
+</body>    
+</html>
